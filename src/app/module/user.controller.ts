@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
 import { userServices } from "./user.service";
+import userValidationSchema from "./user.validator";
 
 const createUser = async (req: Request, res: Response) => {
   try {
     const { user } = req.body;
-    const result = await userServices.createUserIntoDB(user);
+    const zodValidateUserData = userValidationSchema.parse(user);
+    const result = await userServices.createUserIntoDB(zodValidateUserData);
     const {
       userId,
       username,
@@ -30,10 +32,10 @@ const createUser = async (req: Request, res: Response) => {
         address,
       },
     });
-  } catch (error) {
-    res.status(200).json({
-      success: true,
-      message: "something went wrong",
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message || "something went wrong",
       data: error,
     });
   }
@@ -48,10 +50,29 @@ const getAllUser = async (req: Request, res: Response) => {
       message: "Users fetched successfully!",
       data: result,
     });
-  } catch (error) {
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message || "Something went wrong",
+      data: error,
+    });
+  }
+};
+
+const getSingleUser = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const result = await userServices.getSingleUserFromDB(Number(userId));
+
     res.status(200).json({
       success: true,
-      message: "Something went wrong",
+      message: "User fetched successfully!",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message || "Something went wrong",
       data: error,
     });
   }
@@ -60,4 +81,5 @@ const getAllUser = async (req: Request, res: Response) => {
 export const userControllers = {
   createUser,
   getAllUser,
+  getSingleUser,
 };

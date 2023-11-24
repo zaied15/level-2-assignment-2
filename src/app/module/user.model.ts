@@ -1,5 +1,11 @@
 import { Model, model, Schema } from "mongoose";
-import { TAddress, TFullName, TOrder, TUser } from "./user.interface";
+import {
+  TAddress,
+  TFullName,
+  TOrder,
+  TUser,
+  UserModel,
+} from "./user.interface";
 
 const fullNameSchema = new Schema<TFullName>({
   firstName: String,
@@ -36,4 +42,4 @@ userSchema.statics.isUserExists = async function (userId: string) {
   return existingUser;
 };
 
-export const User = model<TUser>("User", userSchema);
+export const User = model<TUser, UserModel>("User", userSchema);
