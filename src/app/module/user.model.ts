@@ -49,6 +49,16 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
+userSchema.pre('updateOne', async function (next) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const user: any = this.getUpdate();
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bcrypt_salt_rounds),
+  );
+  next();
+});
+
 userSchema.post('save', function (doc, next) {
   doc.password = '';
   next();

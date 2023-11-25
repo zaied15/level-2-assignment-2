@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { userServices } from './user.service';
 import userValidationSchema, { orderSchema } from './user.validator';
 
+// Create User controller
 const createUser = async (req: Request, res: Response) => {
   try {
     const { user } = req.body;
@@ -42,6 +43,7 @@ const createUser = async (req: Request, res: Response) => {
   }
 };
 
+// Get All User Controller
 const getAllUser = async (req: Request, res: Response) => {
   try {
     const result = await userServices.getAllUserFromDB();
@@ -61,6 +63,7 @@ const getAllUser = async (req: Request, res: Response) => {
   }
 };
 
+// Get Single User Controller
 const getSingleUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
@@ -69,7 +72,7 @@ const getSingleUser = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: 'User fetched successfully!',
-      data: result,
+      data: result[0],
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -81,6 +84,7 @@ const getSingleUser = async (req: Request, res: Response) => {
   }
 };
 
+// Update User controller
 const updateSingleUser = async (req: Request, res: Response) => {
   try {
     const { userId: id } = req.params;
@@ -129,6 +133,7 @@ const updateSingleUser = async (req: Request, res: Response) => {
   }
 };
 
+// Delete user controller
 const deleteUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
@@ -150,23 +155,24 @@ const deleteUser = async (req: Request, res: Response) => {
   }
 };
 
+// Add Order Controller
 const addOrder = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const order = req.body;
     const validateOrder = orderSchema.parse(order);
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
     const result = await userServices.addOrderIntoDB(
       Number(userId),
       validateOrder,
     );
 
-    if (result.acknowledged === true) {
-      res.status(200).json({
-        success: true,
-        message: 'Order created successfully!',
-        data: null,
-      });
-    }
+    res.status(200).json({
+      success: true,
+      message: 'Order created successfully!',
+      data: null,
+    });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -178,6 +184,7 @@ const addOrder = async (req: Request, res: Response) => {
   }
 };
 
+// Get All Oder Controller
 const getAllOrder = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
@@ -185,7 +192,9 @@ const getAllOrder = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: 'Order fetched successfully!',
-      data: { orders: result[0].orders },
+      data: {
+        orders: result[0].orders,
+      },
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -197,6 +206,7 @@ const getAllOrder = async (req: Request, res: Response) => {
   }
 };
 
+// Get Total Price Controller
 const getTotalPrice = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
@@ -211,7 +221,10 @@ const getTotalPrice = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: error.message || 'Something went wrong',
-      data: error,
+      error: {
+        code: 404,
+        description: 'User not found!',
+      },
     });
   }
 };
