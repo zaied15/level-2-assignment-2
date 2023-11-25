@@ -94,21 +94,6 @@ const addOrderIntoDB = async (userId: number, orderData: TOrder) => {
     { $push: { orders: orderData } },
     { upsert: true, new: true },
   );
-
-  // const result = await User.aggregate([
-  //   { $match: { userId: userId } },
-  //   {
-  //     $addFields: {
-  //       orders: {
-  //         $cond: {
-  //           if: { $eq: [{ $type: '$orders' }, 'missing'] },
-  //           then: [orderData],
-  //           else: { $concatArrays: ['$orders', [orderData]] },
-  //         },
-  //       },
-  //     },
-  //   },
-  // ]);
   return result;
 };
 

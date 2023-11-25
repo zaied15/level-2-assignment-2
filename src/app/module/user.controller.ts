@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { userServices } from './user.service';
-import userValidationSchema, { orderSchema } from './user.validator';
+import userValidationSchema, { orderZodSchema } from './user.validator';
 
 // Create User controller
 const createUser = async (req: Request, res: Response) => {
@@ -160,7 +160,7 @@ const addOrder = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const order = req.body;
-    const validateOrder = orderSchema.parse(order);
+    const validateOrder = orderZodSchema.parse(order);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
     const result = await userServices.addOrderIntoDB(
