@@ -1,13 +1,13 @@
-import { Model, model, Schema } from "mongoose";
-import bcrypt from "bcrypt";
+import { model, Schema } from 'mongoose';
+import bcrypt from 'bcrypt';
 import {
   TAddress,
   TFullName,
   TOrder,
   TUser,
   UserModel,
-} from "./user.interface";
-import config from "../config";
+} from './user.interface';
+import config from '../config';
 
 const fullNameSchema = new Schema<TFullName>({
   firstName: String,
@@ -39,7 +39,8 @@ const userSchema = new Schema<TUser>({
   orders: [orderSchema],
 });
 
-userSchema.pre("save", async function (next) {
+userSchema.pre('save', async function (next) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
   const user = this;
   user.password = await bcrypt.hash(
     user.password,
@@ -48,8 +49,9 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.post("save", function (doc, next) {
-  (doc.password = ""), next();
+userSchema.post('save', function (doc, next) {
+  doc.password = '';
+  next();
 });
 
 userSchema.statics.isUserExists = async function (userId: number) {
@@ -57,4 +59,4 @@ userSchema.statics.isUserExists = async function (userId: number) {
   return existingUser;
 };
 
-export const User = model<TUser, UserModel>("User", userSchema);
+export const User = model<TUser, UserModel>('User', userSchema);

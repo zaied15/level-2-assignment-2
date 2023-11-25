@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { userServices } from "./user.service";
-import userValidationSchema from "./user.validator";
+import { Request, Response } from 'express';
+import { userServices } from './user.service';
+import userValidationSchema from './user.validator';
 
 const createUser = async (req: Request, res: Response) => {
   try {
@@ -20,7 +20,7 @@ const createUser = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: "User created successfully!",
+      message: 'User created successfully!',
       data: {
         userId,
         username,
@@ -32,10 +32,11 @@ const createUser = async (req: Request, res: Response) => {
         address,
       },
     });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     res.status(500).json({
       success: false,
-      message: error.message || "something went wrong",
+      message: error.message || 'something went wrong',
       data: error,
     });
   }
@@ -47,13 +48,14 @@ const getAllUser = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: "Users fetched successfully!",
+      message: 'Users fetched successfully!',
       data: result,
     });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     res.status(500).json({
       success: false,
-      message: error.message || "Something went wrong",
+      message: error.message || 'Something went wrong',
       data: error,
     });
   }
@@ -66,13 +68,14 @@ const getSingleUser = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: "User fetched successfully!",
+      message: 'User fetched successfully!',
       data: result,
     });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     res.status(500).json({
       success: false,
-      message: error.message || "Something went wrong",
+      message: error.message || 'Something went wrong',
       data: error,
     });
   }
@@ -90,9 +93,6 @@ const updateSingleUser = async (req: Request, res: Response) => {
     );
 
     if (result.acknowledged === true) {
-      const resultAfterOutput = await userServices.getSingleUserFromDB(
-        user.userId,
-      );
       const {
         userId,
         username,
@@ -106,7 +106,7 @@ const updateSingleUser = async (req: Request, res: Response) => {
 
       res.status(200).json({
         success: true,
-        message: "User updated successfully!",
+        message: 'User updated successfully!',
         data: {
           userId,
           username,
@@ -119,10 +119,11 @@ const updateSingleUser = async (req: Request, res: Response) => {
         },
       });
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     res.status(500).json({
       success: false,
-      message: error.message || "Something went wrong",
+      message: error.message || 'Something went wrong',
       data: error,
     });
   }
@@ -132,15 +133,18 @@ const deleteUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const result = await userServices.deleteUserFromDB(Number(userId));
-    res.status(200).json({
-      success: true,
-      message: "User deleted successfully!",
-      data: null,
-    });
+    if (result.acknowledged === true) {
+      res.status(200).json({
+        success: true,
+        message: 'User deleted successfully!',
+        data: null,
+      });
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     res.status(500).json({
       success: false,
-      message: error.message || "Something went wrong",
+      message: error.message || 'Something went wrong',
       data: error,
     });
   }

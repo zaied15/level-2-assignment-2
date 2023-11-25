@@ -1,9 +1,9 @@
-import { TUser } from "./user.interface";
-import { User } from "./user.model";
+import { TUser } from './user.interface';
+import { User } from './user.model';
 
 const createUserIntoDB = async (userData: TUser) => {
   if (await User.isUserExists(userData.userId)) {
-    throw new Error("User already exist");
+    throw new Error('User already exist');
   }
   const result = await User.create(userData);
   return result;
@@ -27,7 +27,7 @@ const getAllUserFromDB = async () => {
 
 const getSingleUserFromDB = async (userId: number) => {
   if ((await User.isUserExists(userId)) === null) {
-    throw new Error("User not found in Database");
+    throw new Error('User not found in Database');
   }
   const result = await User.aggregate([
     { $match: { userId } },
@@ -49,7 +49,7 @@ const getSingleUserFromDB = async (userId: number) => {
 
 const updateUserIntoDB = async (id: number, userData: TUser) => {
   if (id !== userData.userId && (await User.isUserExists(id)) === null) {
-    throw new Error("User not found to update!");
+    throw new Error('User not found to update!');
   }
   const result = User.updateOne(
     { userId: id },
@@ -71,7 +71,7 @@ const updateUserIntoDB = async (id: number, userData: TUser) => {
 
 const deleteUserFromDB = async (userId: number) => {
   if ((await User.isUserExists(userId)) === null) {
-    throw new Error("User not found to delete!");
+    throw new Error('User not found to delete!');
   }
   const result = await User.deleteOne({ userId: userId });
   return result;
