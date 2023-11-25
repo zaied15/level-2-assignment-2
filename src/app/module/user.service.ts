@@ -1,4 +1,4 @@
-import { TUser } from './user.interface';
+import { TOrder, TUser } from './user.interface';
 import { User } from './user.model';
 
 const createUserIntoDB = async (userData: TUser) => {
@@ -77,10 +77,52 @@ const deleteUserFromDB = async (userId: number) => {
   return result;
 };
 
+const addOrderIntoDB = async (userId: number, orderData: TOrder) => {
+  if ((await User.isUserExists(userId)) === null) {
+    throw new Error('No user found to make this order!');
+  }
+  const result = await User.updateOne(
+    { userId: userId },
+    { $push: { orders: orderData } },
+  );
+  return result;
+};
+
+const getOrderFromDB = async (userId: number) => {
+  if ((await User.isUserExists(userId)) === null) {
+    throw new Error('No user found to display orders!');
+  }
+  const result = await User.find({ userId: userId });
+  return result;
+};
+
+const getTotalPriceFromDB = async (userId: number) => {
+  if ((await User.isUserExists(userId)) === null) {
+    throw new Error('Sorry, No user found to calculate price!');
+  }
+  const result = await User.aggregate([
+    { $match: { userId: userId } },
+    { $unwind: '$orders' },
+    {
+      $group: {
+        _id: null,
+        totalCost: {
+          $sum: { $multiply: ['$orders.price', '$orders.quantity'] },
+        },
+      },
+    },
+    { $project: { _id: 0, totalPrice: '$totalCost' } },
+  ]);
+  return result;
+};
+
 export const userServices = {
   createUserIntoDB,
   getAllUserFromDB,
   getSingleUserFromDB,
   updateUserIntoDB,
   deleteUserFromDB,
+  addOrderIntoDB,
+  getOrderFromDB,
+  getTotalPriceFromDB,
 };
