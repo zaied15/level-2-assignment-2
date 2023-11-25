@@ -37,8 +37,8 @@ const userSchema = new Schema<TUser>({
   orders: [orderSchema],
 });
 
-userSchema.statics.isUserExists = async function (userId: string) {
-  const existingUser = await User.find({ userId });
+userSchema.statics.isUserExists = async function (userId: number) {
+  const existingUser = await User.findOne({ userId });
   return existingUser;
 };
 

@@ -78,8 +78,78 @@ const getSingleUser = async (req: Request, res: Response) => {
   }
 };
 
+const updateSingleUser = async (req: Request, res: Response) => {
+  try {
+    const { userId: id } = req.params;
+    const idNumber = Number(id);
+    const { user } = req.body;
+    const zodValidateUserData = userValidationSchema.parse(user);
+    const result = await userServices.updateUserIntoDB(
+      idNumber,
+      zodValidateUserData,
+    );
+
+    if (result.acknowledged === true) {
+      const resultAfterOutput = await userServices.getSingleUserFromDB(
+        user.userId,
+      );
+      const {
+        userId,
+        username,
+        fullName,
+        age,
+        email,
+        isActive,
+        hobbies,
+        address,
+      } = zodValidateUserData;
+
+      res.status(200).json({
+        success: true,
+        message: "User updated successfully!",
+        data: {
+          userId,
+          username,
+          fullName,
+          age,
+          email,
+          isActive,
+          hobbies,
+          address,
+        },
+      });
+    }
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message || "Something went wrong",
+      data: error,
+    });
+  }
+};
+
+const deleteUser = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const result = await userServices.deleteUserFromDB(Number(userId));
+    res.status(200).json({
+      success: true,
+      message: "User deleted successfully!",
+      data: null,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message || "Something went wrong",
+      data: error,
+    });
+  }
+};
+
 export const userControllers = {
   createUser,
   getAllUser,
   getSingleUser,
+  updateSingleUser,
+  deleteUser,
 };
