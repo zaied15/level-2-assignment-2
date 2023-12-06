@@ -1,12 +1,14 @@
 import { Request, Response } from 'express';
 import { userServices } from './user.service';
 import userValidationSchema, { orderZodSchema } from './user.validator';
+import { ZodError } from 'zod';
 
 // Create User controller
 const createUser = async (req: Request, res: Response) => {
   try {
     const { user } = req.body;
     const zodValidateUserData = userValidationSchema.parse(user);
+
     const result = await userServices.createUserIntoDB(zodValidateUserData);
     const {
       userId,
@@ -35,10 +37,15 @@ const createUser = async (req: Request, res: Response) => {
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
+    if (error instanceof ZodError) {
+      res.status(400).json({
+        success: false,
+        message: 'User data format is not valid!',
+      });
+    }
     res.status(500).json({
       success: false,
       message: error.message || 'something went wrong',
-      data: error,
     });
   }
 };
@@ -125,6 +132,12 @@ const updateSingleUser = async (req: Request, res: Response) => {
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
+    if (error instanceof ZodError) {
+      res.status(400).json({
+        success: false,
+        message: 'User data format is not valid to update!',
+      });
+    }
     res.status(500).json({
       success: false,
       message: error.message || 'Something went wrong',
@@ -176,6 +189,12 @@ const addOrder = async (req: Request, res: Response) => {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
+    if (error instanceof ZodError) {
+      res.status(400).json({
+        success: false,
+        message: 'Order data format is not valid!',
+      });
+    }
     res.status(500).json({
       success: false,
       message: error.message || 'Something went wrong',

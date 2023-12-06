@@ -1,8 +1,14 @@
 import { z } from 'zod';
 
 const fullNameZodSchema = z.object({
-  firstName: z.string(),
-  lastName: z.string(),
+  firstName: z.string({
+    required_error: 'First name is required',
+    invalid_type_error: 'First name must be a string',
+  }),
+  lastName: z.string({
+    required_error: 'Last name is required',
+    invalid_type_error: 'Last name must be a string',
+  }),
 });
 
 const addressZodSchema = z.object({
@@ -18,11 +24,26 @@ export const orderZodSchema = z.object({
 });
 
 export const userValidationSchema = z.object({
-  userId: z.number().int().positive(),
-  username: z.string(),
-  password: z.string(),
+  userId: z
+    .number({
+      required_error: 'Id is required',
+      invalid_type_error: 'Id must be a number',
+    })
+    .int()
+    .positive(),
+  username: z.string({
+    required_error: 'User name is required',
+    invalid_type_error: 'Name must be a string',
+  }),
+  password: z.string({
+    required_error: 'Password is required',
+    invalid_type_error: 'Password must be a string',
+  }),
   fullName: fullNameZodSchema,
-  age: z.number().int().positive(),
+  age: z
+    .number({ invalid_type_error: 'Age must be a number' })
+    .int()
+    .positive(),
   email: z.string().email(),
   isActive: z.boolean(),
   hobbies: z.array(z.string()),
