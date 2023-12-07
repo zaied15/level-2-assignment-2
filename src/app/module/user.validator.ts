@@ -12,15 +12,34 @@ const fullNameZodSchema = z.object({
 });
 
 const addressZodSchema = z.object({
-  street: z.string(),
-  city: z.string(),
-  country: z.string(),
+  street: z.string({
+    required_error: 'Street is required',
+    invalid_type_error: 'Street must be a string',
+  }),
+  city: z.string({
+    required_error: 'City is required',
+    invalid_type_error: 'City name must be a string',
+  }),
+  country: z.string({
+    required_error: 'Country is required',
+    invalid_type_error: 'Country name must be a string',
+  }),
 });
 
 export const orderZodSchema = z.object({
-  productName: z.string(),
-  price: z.number().positive(),
-  quantity: z.number().positive(),
+  productName: z.string({
+    invalid_type_error: 'Product name must be a string',
+  }),
+  price: z
+    .number({
+      invalid_type_error: 'Price must be a number',
+    })
+    .positive(),
+  quantity: z
+    .number({
+      invalid_type_error: 'Quantity must be a number',
+    })
+    .positive(),
 });
 
 export const userValidationSchema = z.object({
@@ -46,7 +65,11 @@ export const userValidationSchema = z.object({
     .positive(),
   email: z.string().email(),
   isActive: z.boolean(),
-  hobbies: z.array(z.string()),
+  hobbies: z.array(
+    z.string({
+      invalid_type_error: 'Hobbies must be a string',
+    }),
+  ),
   address: addressZodSchema,
   orders: z.array(orderZodSchema).optional(),
 });

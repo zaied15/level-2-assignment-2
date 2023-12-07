@@ -71,7 +71,7 @@ const updateUserIntoDB = async (id: number, userData: TUser) => {
       hobbies: userData.hobbies,
       address: userData.address,
     },
-    { upsert: true },
+    { upsert: true, new: true },
   );
   return result;
 };

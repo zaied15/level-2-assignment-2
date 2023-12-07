@@ -38,7 +38,7 @@ const createUser = async (req: Request, res: Response) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error instanceof ZodError) {
-      res.status(400).json({
+      res.status(500).json({
         success: false,
         message: 'User data format is not valid!',
       });
@@ -133,9 +133,11 @@ const updateSingleUser = async (req: Request, res: Response) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error instanceof ZodError) {
-      res.status(400).json({
+      res.status(500).json({
         success: false,
         message: 'User data format is not valid to update!',
+        errorType: error.issues[0].message,
+        data: null,
       });
     }
     res.status(500).json({
@@ -190,7 +192,7 @@ const addOrder = async (req: Request, res: Response) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error instanceof ZodError) {
-      res.status(400).json({
+      res.status(500).json({
         success: false,
         message: 'Order data format is not valid!',
       });
