@@ -6,9 +6,8 @@ import { ZodError } from 'zod';
 // Create User controller
 const createUser = async (req: Request, res: Response) => {
   try {
-    const { user } = req.body;
+    const user = req.body;
     const zodValidateUserData = userValidationSchema.parse(user);
-
     const result = await userServices.createUserIntoDB(zodValidateUserData);
     const {
       userId,
@@ -62,6 +61,12 @@ const getAllUser = async (req: Request, res: Response) => {
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
+    if (error.name === 'CastError') {
+      res.status(500).json({
+        success: false,
+        message: 'Something went wrong',
+      });
+    }
     res.status(500).json({
       success: false,
       message: error.message || 'Something went wrong',
@@ -83,6 +88,12 @@ const getSingleUser = async (req: Request, res: Response) => {
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
+    if (error.name === 'CastError') {
+      res.status(500).json({
+        success: false,
+        message: 'Something went wrong',
+      });
+    }
     res.status(500).json({
       success: false,
       message: error.message || 'Something went wrong',
@@ -96,7 +107,7 @@ const updateSingleUser = async (req: Request, res: Response) => {
   try {
     const { userId: id } = req.params;
     const idNumber = Number(id);
-    const { user } = req.body;
+    const user = req.body;
     const zodValidateUserData = userValidationSchema.parse(user);
     const result = await userServices.updateUserIntoDB(
       idNumber,
@@ -162,6 +173,12 @@ const deleteUser = async (req: Request, res: Response) => {
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
+    if (error.name === 'CastError') {
+      res.status(500).json({
+        success: false,
+        message: 'Something went wrong',
+      });
+    }
     res.status(500).json({
       success: false,
       message: error.message || 'Something went wrong',
@@ -197,6 +214,12 @@ const addOrder = async (req: Request, res: Response) => {
         message: 'Order data format is not valid!',
       });
     }
+    if (error.name === 'CastError') {
+      res.status(500).json({
+        success: false,
+        message: 'Something went wrong',
+      });
+    }
     res.status(500).json({
       success: false,
       message: error.message || 'Something went wrong',
@@ -219,6 +242,12 @@ const getAllOrder = async (req: Request, res: Response) => {
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
+    if (error.name === 'CastError') {
+      res.status(500).json({
+        success: false,
+        message: 'Something went wrong',
+      });
+    }
     res.status(500).json({
       success: false,
       message: error.message || 'Something went wrong',
@@ -235,10 +264,16 @@ const getTotalPrice = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: 'Total price calculated successfully!',
-      data: result[0],
+      data: result[0] || 0,
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
+    if (error.name === 'CastError') {
+      res.status(500).json({
+        success: false,
+        message: 'Something went wrong',
+      });
+    }
     res.status(500).json({
       success: false,
       message: error.message || 'Something went wrong',
